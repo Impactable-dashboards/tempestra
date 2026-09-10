@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Tempestera · Intelligence Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --asphalt:#0A0A0C;--concrete:#15151A;--court:#22222A;--bone:#F4F1EA;--chalk:#D8D4C8;
+  --navy:#0D2D5E;--navy-deep:#071A38;--blue:#1B9BD1;--blue-soft:#5BB8E0;
+  --canopy:#D4FF3D;--moss:#7BAA3E;--terracotta:#C4521F;--hazard:#FF5A1F;--clay:#FFB627;--jet-pink:#FF2D7A;
+  --bg:var(--asphalt);--surface:var(--concrete);--line:var(--court);--ink:var(--bone);--muted:#9a9788;--card:#15151A;
+  --canopy-text:#D4FF3D;      /* canopy as text on dark bg */
+  --moss-text:#7BAA3E;
+  --clay-text:#FFB627;
+  --terra-text:#E0703A;
+}
+html[data-theme="light"]{
+  --bg:#F4F1EA;--surface:#FBFAF6;--line:#E0DCCF;--ink:#161512;--muted:#6b6659;--card:#FFFFFF;--chalk:#4a463c;
+  --canopy-text:#5C7200;      /* 8:1 on bone. never use raw --canopy for text in light mode */
+  --moss-text:#4a7a20;
+  --clay-text:#b07800;
+  --terra-text:#C4521F;
+}
+/* pinned dark panels: theme tokens flip and break, so panels with fixed dark bg pin literals */
+.dark-panel{ --ink:#F4F1EA; --chalk:rgba(216,212,200,.85); --muted:rgba(216,212,200,.7); --canopy-text:#D4FF3D; --moss-text:#7BAA3E; --blue-soft:#5BB8E0; --line:rgba(255,255,255,.14); --card:rgba(255,255,255,.04); }
+.dark-panel .btn.ghost{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.8)}
+.dark-panel .btn.ghost:hover{border-color:rgba(255,255,255,.6);color:#fff}
+/* theme-paired subtle fills */
+.tint{background:rgba(0,0,0,.05)}
+[data-theme="dark"] .tint{background:rgba(255,255,255,.05)}
+
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.6;font-size:15px;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.025) 1px,transparent 0);background-size:32px 32px}
+html[data-theme="light"] body::before{background-image:radial-gradient(circle at 1px 1px,rgba(0,0,0,.03) 1px,transparent 0)}
+.mono{font-family:'JetBrains Mono',monospace}
+.editorial{font-family:'Fraunces',serif;font-style:italic}
+h1,h2,h3{font-family:'Archivo Black',sans-serif;font-weight:400;line-height:1.08;letter-spacing:-.01em}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+a{color:var(--blue)}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1080px;margin:0 auto;padding:11px 24px;display:flex;align-items:center;gap:12px}
+.brand{font-family:'Archivo Black';font-size:16px;letter-spacing:-.02em;white-space:nowrap}
+.brand .imp{color:var(--canopy-text)}
+.brand{flex-shrink:0}
+@media(max-width:560px){.brand-x{display:none}.nav-in{gap:9px;padding:11px 16px}.wrap{padding:0 16px}}
+.tabs{display:flex;gap:2px;margin-left:6px;overflow-x:auto;scrollbar-width:none;min-width:0}
+.tabs::-webkit-scrollbar{display:none}
+.tab{font-family:'JetBrains Mono';font-size:11.5px;letter-spacing:.02em;font-weight:500;padding:8px 13px;border-radius:7px;background:none;border:none;color:var(--muted);cursor:pointer;white-space:nowrap;transition:.15s}
+.tab:hover{color:var(--ink);background:var(--card)}
+.tab.active{color:var(--asphalt);background:var(--canopy)}
+html[data-theme="light"] .tab.active{color:#0A0A0C}
+.nav-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.nav-cta{font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:8px 13px;border-radius:7px;background:var(--blue);color:#04121f;text-decoration:none;white-space:nowrap}
+#themeBtn{background:var(--card);border:1px solid var(--line);color:var(--ink);width:32px;height:32px;border-radius:7px;cursor:pointer;font-size:14px}
+
+/* VIEWS */
+.view{display:none;animation:fade .3s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.sec{padding:40px 0;border-bottom:1px solid var(--line)}
+.sec:last-child{border-bottom:none}
+.kicker{font-family:'JetBrains Mono';font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--canopy-text);font-weight:700;margin-bottom:14px}
+.secnum{color:var(--muted)}
+.lede{font-size:17px;color:var(--chalk);max-width:760px;margin-top:14px}
+h2.big{font-size:clamp(26px,4.4vw,40px);margin-top:6px}
+h3{font-size:19px;margin-bottom:8px}
+
+/* AT A GLANCE */
+.glance{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:22px 0}
+.glance .lbl{font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.glance ul{list-style:none;display:grid;gap:8px}
+.glance li{font-size:13.5px;padding-left:18px;position:relative;color:var(--chalk)}
+.glance li::before{content:"";position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:2px;background:var(--canopy)}
+.glance li b{color:var(--ink)}
+
+/* CARDS + GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid2>*,.grid3>*{min-width:0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;min-width:0}
+.card h3{font-size:16px}
+.card .src{font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.tag{display:inline-block;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:5px;background:var(--tint,rgba(0,0,0,.05));border:1px solid var(--line);color:var(--muted)}
+[data-theme="dark"] .tag{background:rgba(255,255,255,.05)}
+
+/* HERO */
+.hero{padding:48px 0 34px;position:relative}
+.thesis-block{background:linear-gradient(135deg,#071A38,#0D2D5E);border-radius:18px;padding:34px 32px;margin-top:8px;border:1px solid rgba(255,255,255,.09)}
+.hero h1{font-size:clamp(30px,6vw,54px);color:#F4F1EA}
+.hero h1 .hl{color:#D4FF3D}
+.hero .sub{font-size:18px;color:rgba(216,212,200,.9);max-width:720px;margin-top:16px}
+.metastrip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:26px}
+@media(max-width:640px){.metastrip{grid-template-columns:1fr 1fr}}
+.stat{background:var(--card);padding:16px 18px}
+.stat .n{font-family:'Archivo Black';font-size:26px;color:var(--ink)}
+.stat .l{font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+
+/* MOVES */
+.moves{display:grid;gap:12px;margin-top:24px}
+.move{display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--mc,var(--blue));border-radius:10px;padding:16px 18px;cursor:pointer;text-decoration:none;color:inherit;transition:.15s}
+.move:hover{transform:translateX(3px);border-color:var(--mc,var(--blue))}
+.move .mn{font-family:'Archivo Black';font-size:20px;color:var(--mc,var(--blue));min-width:30px}
+.move .mt{font-weight:700;font-size:15.5px;color:var(--ink)}
+.move .md{font-size:13.5px;color:var(--chalk);margin-top:3px}
+.move .go{margin-left:auto;font-family:'JetBrains Mono';font-size:11px;color:var(--blue-soft);white-space:nowrap;align-self:center}
+
+/* BTN */
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+.btn{font-family:'JetBrains Mono';font-size:12px;font-weight:700;letter-spacing:.03em;padding:12px 20px;border-radius:9px;text-decoration:none;cursor:pointer;border:1px solid transparent;display:inline-block}
+.btn.primary{background:var(--canopy);color:#0A0A0C}
+.btn.ghost{background:none;border-color:var(--line);color:var(--ink)}
+.btn.blue{background:var(--blue);color:#04121f}
+
+/* EVIDENCE / STRAT READ */
+.evi{font-family:'JetBrains Mono';font-size:12px;color:var(--muted);border-left:2px solid var(--moss-text);padding:4px 0 4px 12px;margin-top:12px}
+.strat{background:var(--tint,rgba(0,0,0,.05));border-radius:9px;padding:14px 16px;margin-top:12px;font-size:14px;color:var(--ink)}
+[data-theme="dark"] .strat{background:rgba(255,255,255,.05)}
+.strat b{color:var(--canopy-text)}
+
+/* TABLES */
+.tbl-wrap{overflow-x:auto;max-width:100%;margin-top:14px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:13px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td b{color:var(--ink)}
+
+/* TOGGLE */
+details{margin-top:12px;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--tint,rgba(0,0,0,.04))}
+[data-theme="dark"] details{background:rgba(255,255,255,.03)}
+summary{list-style:none;cursor:pointer;padding:11px 15px;font-family:'JetBrains Mono';font-size:11.5px;letter-spacing:.03em;color:var(--ink);font-weight:500;display:flex;align-items:center;gap:9px;background:var(--card)}
+summary::-webkit-details-marker{display:none}
+summary .chip{width:18px;height:18px;border-radius:5px;background:var(--canopy);color:#0A0A0C;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+details[open] summary .chip::after{content:"–"}
+details:not([open]) summary .chip::after{content:"+"}
+summary:hover{background:var(--blue);color:#04121f}
+summary:hover .chip{background:#04121f;color:var(--blue-soft)}
+details[open] summary .v{display:none}
+.det-body{padding:15px 16px;font-size:13px;color:var(--chalk)}
+.det-body ul{margin-left:16px;display:grid;gap:6px;margin-top:6px}
+
+/* SVG FIG */
+figure{margin:22px 0}
+.fig{width:100%;overflow-x:auto}
+.fig svg{width:100%;height:auto;display:block}
+@media(max-width:700px){.fig{overflow-x:auto}.fig svg{min-width:600px}}
+figcaption{font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5}
+
+/* CHANNEL CARDS (How It Works) */
+.chan{display:flex;flex-direction:column;gap:14px;margin-top:20px}
+.chan-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--cc,var(--blue));border-radius:11px;padding:20px 22px}
+.chan-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.chan-head .role{font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--cc,var(--blue))}
+.chan-head .ct{font-family:'Archivo Black';font-size:17px}
+.chan-head .tags{margin-left:auto;font-family:'JetBrains Mono';font-size:10.5px;color:var(--muted);letter-spacing:.03em}
+.chan-card p{font-size:14px;color:var(--chalk);margin-top:10px}
+.chan-card .why{margin-top:12px;padding:11px 14px;background:var(--tint,rgba(0,0,0,.05));border-radius:8px;font-size:13px}
+[data-theme="dark"] .chan-card .why{background:rgba(255,255,255,.05)}
+.chan-card .why b{color:var(--cc,var(--blue))}
+
+/* PRICING MATRIX */
+.pm-wrap{overflow-x:auto;margin-top:8px}
+.pm{border-collapse:separate;border-spacing:0;width:100%;min-width:720px;font-size:13px}
+.pm th,.pm td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left}
+.pm thead th{vertical-align:bottom;border-bottom:2px solid var(--line)}
+.pm .plan-name{font-family:'Archivo Black';font-size:16px;color:var(--ink)}
+.pm .plan-price{font-family:'JetBrains Mono';font-size:12px;color:var(--muted);margin-top:2px;font-weight:400}
+.pm .rec{background:#071A38;border-radius:12px 12px 0 0;position:relative}
+.pm .rec .plan-name,.pm .rec .plan-price{color:#F4F1EA}
+.pm .rec-pill{display:inline-block;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;text-transform:uppercase;background:#D4FF3D;color:#0A0A0C;padding:2px 7px;border-radius:4px;font-weight:700;margin-bottom:7px}
+.pm td.rec-col{background:var(--tint,rgba(0,0,0,.04))}
+[data-theme="dark"] .pm td.rec-col{background:rgba(255,255,255,.04)}
+.pm .sec-row td{font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--tint,rgba(0,0,0,.03));border-bottom:1px solid var(--line);font-weight:700}
+[data-theme="dark"] .pm .sec-row td{background:rgba(255,255,255,.03)}
+.pm .rlbl{color:var(--chalk);font-weight:500}
+.yes{color:var(--moss-text);font-weight:700}
+.no{color:var(--muted)}
+.part{color:var(--clay-text);font-weight:700}
+.pm .cta-cell{text-align:left}
+
+/* CALLOUT BAR */
+.callout{background:var(--tint,rgba(0,0,0,.05));border:1px solid var(--line);border-radius:11px;padding:16px 20px;margin-top:16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+[data-theme="dark"] .callout{background:rgba(255,255,255,.05)}
+.callout .co-t{font-weight:700;color:var(--ink)}
+.callout .co-d{font-size:13px;color:var(--chalk)}
+
+/* PROOF */
+.proof{display:grid;gap:14px;margin-top:18px}
+.proof-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+.proof-card .metric{font-family:'Archivo Black';font-size:22px;color:var(--canopy-text)}
+.proof-card .name{font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.proof-card .why{font-size:13.5px;color:var(--chalk);margin-top:10px}
+.proof-card .why b{color:var(--ink)}
+
+/* CTA BLOCK */
+.cta-block{background:linear-gradient(135deg,#071A38,#0D2D5E);border-radius:18px;padding:40px 34px;margin-top:26px;text-align:center;border:1px solid rgba(255,255,255,.09)}
+.cta-block h2{font-size:clamp(24px,4vw,34px);color:#F4F1EA}
+.cta-block p{color:rgba(216,212,200,.9);max-width:560px;margin:14px auto 0;font-size:15px}
+
+/* FIT */
+.fit{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:8px}
+.fit h3{color:var(--moss-text)}
+.fit ul{list-style:none;display:grid;gap:9px;margin-top:12px}
+.fit li{padding-left:24px;position:relative;font-size:14px;color:var(--chalk)}
+.fit li::before{content:"✓";position:absolute;left:0;color:var(--moss-text);font-weight:700}
+.fit li b{color:var(--ink)}
+
+/* FOOTER */
+.foot{padding:30px 0 50px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted);line-height:1.7}
+.foot a{color:var(--blue-soft)}
+
+.eyebrow{font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+</style>
+<style>
+/* ADDITIVE BLOCK: view-specific visuals only. Canonical block above stays byte-identical. */
+/* narrowing funnel (Targeting S1) */
+.fnl{display:flex;flex-direction:column;align-items:center;gap:10px;margin:20px 0 6px}
+.fband{border-radius:10px;padding:14px 18px;text-align:center;width:100%}
+.fband .fb-scope{font-family:'JetBrains Mono';font-size:11px;letter-spacing:.04em;font-weight:700}
+.fband .fb-main{font-family:'Archivo Black';font-size:15px;margin-top:2px}
+.fb1{background:#FFB627;width:100%}
+.fb2{background:#1B9BD1;width:70%}
+.fb3{background:#D4FF3D;width:44%}
+.fb1 *,.fb3 *{color:#0A0A0C}
+.fb2 *{color:#04121f}
+.fb-desc{font-size:12.5px;color:var(--muted);text-align:center;max-width:640px;margin:2px auto 0}
+/* committee persona cards */
+.committee{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+@media(max-width:760px){.committee{grid-template-columns:1fr}}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.pcard .prole{font-family:'Archivo Black';font-size:15px;color:var(--ink)}
+.ppill{display:inline-block;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:5px;margin-bottom:8px}
+.pp-primary{background:var(--canopy);color:#0A0A0C}
+.pp-secondary{background:rgba(27,155,209,.18);color:var(--blue-text,#0f6a92)}
+[data-theme="dark"] .pp-secondary{color:#5BB8E0}
+.pp-obj{background:rgba(196,82,31,.18);color:var(--terra-text)}
+.pcard .pwho{font-size:13px;color:var(--chalk);margin-top:6px}
+.pcard .pcares{font-size:13px;color:var(--muted);margin-top:6px}
+.chiprow{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px;padding-top:11px;border-top:1px solid var(--line)}
+.fchip{font-family:'JetBrains Mono';font-size:10px;padding:3px 8px;border-radius:5px;background:var(--tint,rgba(0,0,0,.05));border:1px solid var(--line);color:var(--ink)}
+[data-theme="dark"] .fchip{background:rgba(255,255,255,.05)}
+.chiprow .rl{font-family:'JetBrains Mono';font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);width:100%;margin-bottom:-2px}
+/* stepped ladder */
+.ladder{display:flex;flex-direction:column;gap:9px;margin-top:20px}
+.rung{display:flex;align-items:center;gap:14px}
+.rung .rn{font-family:'Archivo Black';font-size:16px;color:var(--muted);width:22px;flex-shrink:0}
+.rbar{border-radius:8px;padding:11px 14px;min-width:0}
+.rbar .rt{font-family:'Inter';font-weight:700;font-size:13.5px;color:#0A0A0C}
+.rbar .rc{font-family:'JetBrains Mono';font-size:11px;color:rgba(10,10,12,.75);margin-top:1px}
+.rbar .rex{font-size:11.5px;color:rgba(10,10,12,.85);margin-top:4px}
+.r1{background:#D4FF3D;width:46%}
+.r2{background:#7BAA3E;width:58%}
+.r3{background:#5BB8E0;width:72%}
+.r4{background:#FFB627;width:86%}
+.r5{background:#C4521F;width:100%}
+.r3 .rt,.r5 .rt{color:#fff}.r3 .rc,.r5 .rc{color:rgba(255,255,255,.85)}.r3 .rex,.r5 .rex{color:rgba(255,255,255,.9)}
+@media(max-width:640px){.rbar{width:100%!important}}
+.legend{font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:12px}
+/* paid-search tradeoff */
+.tradeoff{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+@media(max-width:640px){.tradeoff{grid-template-columns:1fr}}
+.tpanel{border-radius:12px;padding:18px;border:1px solid var(--line)}
+.tpanel h4{font-family:'Archivo Black';font-size:14px;margin-bottom:8px}
+.tpanel.up{background:rgba(123,170,62,.10)}
+.tpanel.up h4{color:var(--moss-text)}
+.tpanel.catch{background:rgba(255,90,31,.10)}
+.tpanel.catch h4{color:var(--terra-text)}
+.tpanel ul{list-style:none;display:grid;gap:7px}
+.tpanel li{font-size:13px;color:var(--chalk);padding-left:16px;position:relative}
+.tpanel li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:2px}
+.tpanel.up li::before{background:var(--moss-text)}
+.tpanel.catch li::before{background:var(--terracotta)}
+.ic{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.ic-chip{font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:5px}
+.ic-hi{background:rgba(123,170,62,.18);color:var(--moss-text)}
+.ic-md{background:rgba(255,182,39,.20);color:var(--clay-text)}
+.ic-lo{background:var(--tint,rgba(0,0,0,.06));color:var(--muted)}
+[data-theme="dark"] .ic-lo{background:rgba(255,255,255,.06)}
+.segtag{display:inline-block;font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;font-weight:700;padding:3px 9px;border-radius:5px;margin-bottom:8px}
+.st-native{background:var(--canopy);color:#0A0A0C}
+.st-combo{background:rgba(27,155,209,.18);color:#0f6a92}
+[data-theme="dark"] .st-combo{color:#5BB8E0}
+.ftable{width:100%;min-width:0;font-size:12.5px;margin-top:10px}
+.ftable td{padding:6px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.ftable td:first-child{font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);width:34%;padding-right:12px}
+.ftable td:last-child{color:var(--chalk)}
+.week1{background:rgba(255,182,39,.10);border:1px solid var(--line);border-left:4px solid var(--clay);border-radius:11px;padding:16px 20px;margin-top:18px}
+.week1 b{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+  RECOMMENDATION VARIABLES  (single source of truth, Rule 22)
+  THESIS: Tempestera already holds what most small studios lack, a named six-person
+    team and real client work in a market where buyers scroll before they buy. Turn that
+    into a visible content engine that creates demand, catch the people it warms with
+    light LinkedIn retargeting, then add Google to capture the founders already searching.
+    Content creates, LinkedIn qualifies, Google captures, in that order.
+  ENTRY MOTION: Content engine (Demand Engine) + light LinkedIn retargeting. Organic-heavy.
+  RECOMMENDED OPTION (pinned): Option 1, Demand Engine + LinkedIn, $2,500/mo + up to ~$5k/mo ad spend.
+  OPTION 2: + Light Google capture, $4,000/mo + up to ~$10k/mo combined spend.
+  NEXT RUNG (reference only): The Connected System, from $5,000/mo (cold LinkedIn + Web ID).
+  SETUP: $1,500 one-time. Management fee always separate from ad spend. 90-day discovery horizon.
+  GOOGLE ROLE: capture + conquest lane (branding/web-design CPC ~$5–12), not the demand engine.
+  CHANNEL ORDER: Create (content) -> Connect (LinkedIn retarget/qualify) -> Capture (Google) -> later Extend/cold + Web ID.
+  BUYER: founder/owner-led SMBs and early startups (roles collapse onto the founder).
+  TARGET MARKET (inferred, confirm): English-speaking primary markets (US/UK/CA/AU) for higher project value.
+============================================================ -->
+
+
+<nav class="nav">
+  <div class="nav-in">
+    <div class="brand"><span class="imp">Impactable</span><span class="brand-x"> × Tempestera</span></div>
+    <div class="tabs">
+      <button class="tab active" data-v="overview">Overview</button>
+      <button class="tab" data-v="whitespace">White Space</button>
+      <button class="tab" data-v="targeting">Targeting</button>
+      <button class="tab" data-v="how">How It Works</button>
+      <button class="tab" data-v="paths">Paths Forward</button>
+    </div>
+    <div class="nav-r">
+      <button id="themeBtn" aria-label="Toggle theme">☾</button>
+      <a class="nav-cta" href="https://landbot.online/v3/H-2201411-ZNNL8EM9RF7C2XAC/index.html" target="_blank" rel="noopener">Book a call</a>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ================= OVERVIEW ================= -->
+<section class="view active" id="overview">
+  <div class="hero">
+    <div class="eyebrow">Impactable × Tempestera · Strategy Room</div>
+    <div class="thesis-block dark-panel">
+      <h1>You sell visibility.<br>The move is to <span class="hl">make your own</span> the proof.</h1>
+      <p class="sub">Tempestera already holds what most small studios never assemble: a named, six-person team and real client work, in a market where buyers scroll and compare before they ever fill out a form. The play is to turn that into a content engine that creates demand, catch the people it warms with light LinkedIn retargeting, then add Google to capture the founders already searching. Content creates, LinkedIn qualifies, Google captures, in that order.</p>
+      <div class="btnrow">
+        <a class="btn primary" href="https://landbot.online/v3/H-2201411-ZNNL8EM9RF7C2XAC/index.html" target="_blank" rel="noopener">Book the walkthrough call</a>
+        <a class="btn ghost" href="#paths" data-goto="paths">See the two starting options</a>
+      </div>
+    </div>
+    <div class="metastrip">
+      <div class="stat"><div class="n">6</div><div class="l">Named leaders, ready as on-camera voices</div></div>
+      <div class="stat"><div class="n">6</div><div class="l">Service lines under one roof</div></div>
+      <div class="stat"><div class="n">$5&ndash;12</div><div class="l">Typical branding / web-design search click</div></div>
+      <div class="stat"><div class="n">90</div><div class="l">Day discovery horizon before scaling</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">The sequence <span class="secnum">/ four moves</span></div>
+    <h2 class="big">What we would build, in order.</h2>
+    <p class="lede">Each move earns the next. The cheapest reach runs first, and every layer makes the one after it work better and cost less.</p>
+    <div class="moves">
+      <a class="move" href="#how" data-goto="how" style="--mc:var(--canopy)">
+        <div class="mn">01</div>
+        <div><div class="mt">Build the content engine that makes demand exist</div><div class="md">One monthly interview with a member of your team, turned into a long-form video, clips, posts, and a newsletter, published from the company page. This is the create motion, and it is the cheapest reach in the whole system.</div></div>
+        <div class="go">How It Works &rsaquo;</div>
+      </a>
+      <a class="move" href="#targeting" data-goto="targeting" style="--mc:var(--blue)">
+        <div class="mn">02</div>
+        <div><div class="mt">Catch and qualify the people the content warms</div><div class="md">Light LinkedIn retargeting filters the founders and owners who engage, by role and company size, and surfaces the named accounts leaning in. The warm pool you retarget is one the content builds.</div></div>
+        <div class="go">Targeting &rsaquo;</div>
+      </a>
+      <a class="move" href="#targeting" data-goto="targeting" style="--mc:var(--terracotta)">
+        <div class="mn">03</div>
+        <div><div class="mt">Add Google to capture founders already searching</div><div class="md">In-market searches for branding and web design are high intent and only moderately priced. Google captures the people already looking and feeds them into the same retargeting pool. It is a capture lane, not the engine.</div></div>
+        <div class="go">Targeting &rsaquo;</div>
+      </a>
+      <a class="move" href="#whitespace" data-goto="whitespace" style="--mc:var(--canopy)">
+        <div class="mn">04</div>
+        <div><div class="mt">Stake out a position the market leaves open</div><div class="md">Premium studios are slow and pricey, the cheap tier is generic, and the crowded middle all says the same thing. Owning one clear position, the whole launch from one team at launch speed, is what lifts you out of the flood and makes every ad cheaper.</div></div>
+        <div class="go">White Space &rsaquo;</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="glance">
+      <div class="lbl">What this room contains</div>
+      <ul>
+        <li><b>White Space:</b> where the design market is saturated on the same claims, and the lanes left open that you can actually own.</li>
+        <li><b>Targeting:</b> who your buyer is, how to reach them most cheaply, the LinkedIn attributes to use, and the search terms to bid on.</li>
+        <li><b>How It Works:</b> how thought leadership, LinkedIn retargeting, and Google combine into one motion, and how they make each other cheaper.</li>
+        <li><b>Paths Forward:</b> where we fit, two scoped starting options, matched proof, and how to begin.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHITE SPACE ================= -->
+<section class="view" id="whitespace">
+  <div class="hero">
+    <div class="eyebrow">Competitive White Space</div>
+    <h2 class="big">Where the market says the same thing, and where it stays quiet.</h2>
+    <p class="lede">We looked across ten studios and platforms a founder actually chooses between, from the premium agencies down to the do-it-yourself tools. Almost all of them reach for the same four promises. When everyone says a thing, it stops meaning anything. The opening is not a better adjective. It is a clear position in a market that is crowded in the middle and silent on a few things that matter.</p>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">The shape of the market</div>
+    <h3>A crowded middle, bracketed above and below</h3>
+    <p class="lede" style="font-size:15px">At the top sit premium studios with a decade of history and enterprise fees. At the bottom sit freelancers, template tools, and unlimited-design subscriptions competing on price and speed. In between is a large, undifferentiated middle where dozens of good studios, Tempestera among them today, all say strategy, partnership, and results. A sharp position cutting through that middle is worth more than any new way to say clarity.</p>
+    <figure>
+      <div class="fig"><svg viewBox="0 0 720 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Market map: premium pole, crowded undifferentiated middle, commodity pole, and the open lane">
+        <rect x="20" y="26" width="680" height="44" rx="9" fill="var(--blue)" opacity="0.92"/>
+        <text x="360" y="46" text-anchor="middle" font-family="'Archivo Black'" font-size="13" fill="#04121f">Premium studios</text>
+        <text x="360" y="62" text-anchor="middle" font-family="'JetBrains Mono'" font-size="10" fill="#04121f">Clay · Ramotion · Focus Lab · DesignStudio · F1Studioz · custom, slow, expensive</text>
+        <rect x="20" y="86" width="680" height="70" rx="9" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+        <text x="360" y="108" text-anchor="middle" font-family="'JetBrains Mono'" font-size="10" fill="var(--muted)">the crowded middle · everyone says the same four things</text>
+        <text x="360" y="128" text-anchor="middle" font-family="'Inter'" font-weight="700" font-size="13" fill="var(--ink)">a positioned studio can own this lane</text>
+        <rect x="250" y="136" width="220" height="14" rx="7" fill="var(--canopy)"/>
+        <text x="360" y="146" text-anchor="middle" font-family="'JetBrains Mono'" font-size="9" fill="#0A0A0C">Tempestera climbs here</text>
+        <rect x="20" y="172" width="680" height="44" rx="9" fill="var(--terracotta)" opacity="0.92"/>
+        <text x="360" y="192" text-anchor="middle" font-family="'Archivo Black'" font-size="13" fill="#fff">Commodity options</text>
+        <text x="360" y="208" text-anchor="middle" font-family="'JetBrains Mono'" font-size="10" fill="#fff">freelance marketplaces · DIY templates · design subscriptions · cheap, fast, generic</text>
+        <text x="360" y="238" text-anchor="middle" font-family="'JetBrains Mono'" font-size="10" fill="var(--muted)">A senior read of the category, not a ranking. The value sits in owning the middle lane, not out-shouting either pole.</text>
+      </svg></div>
+      <figcaption>Ten competitors, grouped by how a founder actually experiences them. The white space is a clear, ownable position in the crowded middle, plus the things nobody in any tier is saying.</figcaption>
+    </figure>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">What everyone is already saying</div>
+    <h3>The four promises that no longer sell</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>The claim</th><th>Who leans on it</th><th>Why it stops working</th></tr></thead>
+        <tbody>
+          <tr><td><b>"Strategy, not just decoration"</b></td><td>Clay, Focus Lab, Musemind, Tempestera, nearly everyone</td><td>It is the default promise of the whole category, top to bottom, so it separates no one from anyone.</td></tr>
+          <tr><td><b>"Your partner / an extension of your team"</b></td><td>Ramotion, Focus Lab, most mid studios</td><td>Every agency says it and none can prove it on a website, so a buyer discounts it on sight.</td></tr>
+          <tr><td><b>"Award-winning, world-class design"</b></td><td>Musemind, DesignStudio, many portfolio-led studios</td><td>Awards signal craft, not fit. A founder cannot tell from a trophy whether the studio gets a business like theirs.</td></tr>
+          <tr><td><b>"End to end, everything you need"</b></td><td>Ramotion, F1Studioz, Tempestera, full-service studios</td><td>Said as a list of services it signals breadth, not a reason to choose. The reason has to be shown, not listed.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="strat"><b>The read:</b> saturation is not a problem to fix with sharper words. It is the reason a specific, provable position is worth so much. The lanes further down are open precisely because the whole field is crowded into these same four phrases.</div>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">Who you are up against · the premium pole</div>
+    <h3>Studios that set the aspiration, and price out the early founder</h3>
+    <p class="lede" style="font-size:14px">These are the studios to learn positioning from, not to fight on cost. Each sells at a tier and a price the early-stage founder cannot reach, which is exactly why they leave that buyer open.</p>
+
+    <div class="card" style="border-left:4px solid var(--blue);margin-top:16px">
+      <h3>F1Studioz</h3><span class="tag">named by you · aspirational, not a peer</span>
+      <div class="tbl-wrap"><table><tbody>
+        <tr><td style="width:30%"><b>Positioning</b></td><td>Enterprise user-experience and front-end engineering for complex software and platforms.</td></tr>
+        <tr><td><b>Who they serve</b></td><td>Product teams at established enterprises. Founded 2012, offices across India and the USA, a large following and a decade of reviews (site, Clutch, LinkedIn).</td></tr>
+        <tr><td><b>Where the gap is</b></td><td>They compete for enterprise product work, not for the founder buying a first brand and site. Naming them points your ambition up-market, but they leave the entire small-and-early tier open.</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--blue);margin-top:14px">
+      <h3>Ramotion</h3><span class="tag">premium brand + web + product, San Francisco</span>
+      <div class="tbl-wrap"><table><tbody>
+        <tr><td style="width:30%"><b>Positioning</b></td><td>A design agency pairing brand identity, web design, and product interface work for funded startups and technology companies.</td></tr>
+        <tr><td><b>Who they serve</b></td><td>Venture-backed startups and established tech brands with real budgets (site portfolio).</td></tr>
+        <tr><td><b>Where the gap is</b></td><td>They do brand and web beautifully but at a premium retainer, and they stop short of running ongoing content. The founder who wants the whole launch on a smaller budget is not their buyer.</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--blue);margin-top:14px">
+      <h3>Clay</h3><span class="tag">premium interface + branding, San Francisco</span>
+      <div class="tbl-wrap"><table><tbody>
+        <tr><td style="width:30%"><b>Positioning</b></td><td>A high-end user-interface and branding agency known for polished work with large technology clients.</td></tr>
+        <tr><td><b>Who they serve</b></td><td>Well-funded companies buying flagship design (site).</td></tr>
+        <tr><td><b>Where the gap is</b></td><td>The bar and the price are set for enterprises. An early founder is a small account here, not the priority. Accessibility and full-launch scope are left open.</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--blue);margin-top:14px">
+      <h3>Focus Lab</h3><span class="tag">business-to-business brand studio, USA</span>
+      <div class="tbl-wrap"><table><tbody>
+        <tr><td style="width:30%"><b>Positioning</b></td><td>Brand strategy, identity, and websites for business-to-business software companies.</td></tr>
+        <tr><td><b>Who they serve</b></td><td>Established B2B software brands buying a considered rebrand (site).</td></tr>
+        <tr><td><b>Where the gap is</b></td><td>Deep on brand systems, but a long, premium engagement aimed at companies past the early stage. The launch-from-zero founder sits outside it.</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--blue);margin-top:14px">
+      <h3>DesignStudio</h3><span class="tag">global brand consultancy</span>
+      <div class="tbl-wrap"><table><tbody>
+        <tr><td style="width:30%"><b>Positioning</b></td><td>A large international agency behind major rebrands for well-known companies.</td></tr>
+        <tr><td><b>Who they serve</b></td><td>Enterprises and scale-ups commissioning big brand programs (site).</td></tr>
+        <tr><td><b>Where the gap is</b></td><td>Enterprise scale and enterprise fees. Nowhere near the early founder. Useful only as proof of what "brand" can mean, not as a competitor for the same buyer.</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">The crowded middle · your real neighbours</div>
+    <h3>Good studios saying the same things you are</h3>
+    <div class="card" style="border-left:4px solid var(--clay);margin-top:16px">
+      <h3>Musemind</h3><span class="tag">design-led studio, startup-focused, global</span>
+      <div class="tbl-wrap"><table><tbody>
+        <tr><td style="width:30%"><b>Positioning</b></td><td>An award-minded user-experience and product design studio working with startups worldwide, with a heavy presence on design portfolios and social.</td></tr>
+        <tr><td><b>Who they serve</b></td><td>Startups and small companies wanting strong interface and product design (site, Dribbble, LinkedIn).</td></tr>
+        <tr><td><b>Where the gap is</b></td><td>The closest structural neighbour, an emerging-market, design-led team. The instructive part: they have built the visibility Tempestera has not yet, by publishing constantly. That is the lane, not a wall.</td></tr>
+      </tbody></table></div>
+      <div class="src">The takeaway is not that they are ahead, it is that visibility is a choice, and it is available.</div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--clay);margin-top:14px">
+      <h3>Framer and Webflow specialist studios</h3><span class="tag">the fast-site-build tier</span>
+      <div class="tbl-wrap"><table><tbody>
+        <tr><td style="width:30%"><b>Positioning</b></td><td>Small studios that build quick, good-looking sites on the same page-builders, often from a template library.</td></tr>
+        <tr><td><b>How buyers choose</b></td><td>Look of the demo and turnaround time. Output can start to look interchangeable across studios.</td></tr>
+        <tr><td><b>Where the gap is</b></td><td>Most stop at the website. Few pair the build with brand foundation and ongoing content, and fewer still show the thinking. Tempestera builds on Framer too, so the separator cannot be the tool, it has to be scope and story.</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">The commodity pole · the "why pay for an agency" objection</div>
+    <h3>The cheap, fast, and do-it-yourself options</h3>
+    <div class="grid3" style="margin-top:16px">
+      <div class="card"><h3>Freelance marketplaces</h3><span class="tag">Fiverr · Upwork · Contra · 99designs</span><p style="font-size:13px;color:var(--chalk);margin-top:8px">Fast, cheap, single-service work. Zero switching cost. <b>The gap:</b> a founder buying a logo, a site, and content from three freelancers becomes their own project manager and hopes the pieces match. Nobody here solves the stitched-together problem.</p></div>
+      <div class="card"><h3>Do-it-yourself platforms</h3><span class="tag">Squarespace · Wix · Canva · Framer templates</span><p style="font-size:13px;color:var(--chalk);margin-top:8px">Templates a founder assembles alone. <b>The gap:</b> cheapest of all, but it costs the founder time and still looks like a template. This is the objection to answer more than a rival to beat.</p></div>
+      <div class="card"><h3>Design subscriptions</h3><span class="tag">Superside · Design Pickle</span><p style="font-size:13px;color:var(--chalk);margin-top:8px">Unlimited design on a monthly plan, run as a ticket queue. <b>The gap:</b> good for ongoing production, weak on the foundational brand and the launched website. No strategy, no one team who knows the business.</p></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">The open lanes</div>
+    <h3>What almost nobody in this market is saying</h3>
+    <p class="lede" style="font-size:15px">Each lane below is a position Tempestera can hold on the strength of what it already does, tied to a specific buyer, with real evidence. These are positions to own, not services to add.</p>
+
+    <div class="grid2" style="margin-top:18px">
+      <div class="card" style="border-top:3px solid var(--canopy)">
+        <h3>The whole launch, from one team</h3>
+        <p style="font-size:13.5px;color:var(--chalk);margin-top:6px"><b>What it means:</b> brand, website, content, and build handled by one accountable team, so a founder does not hire and coordinate three separate people or vendors.</p>
+        <p style="font-size:13.5px;color:var(--chalk);margin-top:8px"><b>How Tempestera is different:</b> the premium studios do brand and web but not ongoing content, subscriptions do production but not the foundation, freelancers do one slice. The full launch from one team is genuinely underserved for early founders, and Tempestera already does it.</p>
+        <p style="font-size:13.5px;color:var(--chalk);margin-top:8px"><b>Who it serves:</b> the early-stage founder launching from zero, who values one team and one timeline over the cheapest single price.</p>
+        <div class="evi">Evidence: six service lines and a named End-to-End Business Solutions offer (site); Praish, a full product design and development engagement (site).</div>
+      </div>
+
+      <div class="card" style="border-top:3px solid var(--terracotta)">
+        <h3>Launch speed without the interchangeable look</h3>
+        <p style="font-size:13.5px;color:var(--chalk);margin-top:6px"><b>What it means:</b> a brand and site live in weeks, not months, that still looks made-for-you rather than pulled from a template.</p>
+        <p style="font-size:13.5px;color:var(--chalk);margin-top:8px"><b>How Tempestera is different:</b> the premium studios are custom but slow and expensive; the Framer and template tier is fast but generic. The fast-and-distinct middle is empty. A Framer-native build with real brand craft sits exactly there.</p>
+        <p style="font-size:13.5px;color:var(--chalk);margin-top:8px"><b>Who it serves:</b> the founder who has to move now, a launch date, a raise, a season, but cannot afford to look like everyone else.</p>
+        <div class="evi">Evidence: Framer-native builds plus a full brand-foundation offer (site). One thing to be straight about: the speed claim should be backed with a real timeline on the next few projects so it is provable.</div>
+      </div>
+
+      <div class="card" style="border-top:3px solid var(--blue)">
+        <h3>Show the people and the process, not just the polish</h3>
+        <p style="font-size:13.5px;color:var(--chalk);margin-top:6px"><b>What it means:</b> publish the thinking, the decisions, and the before-and-after, with the actual team on camera, not only the finished screenshot everyone else posts.</p>
+        <p style="font-size:13.5px;color:var(--chalk);margin-top:8px"><b>How Tempestera is different:</b> premium studios show polished case studies, the small tier hides behind anonymous portfolios. Six named leaders in a visual craft is unusually rich raw material, and being on camera explaining the work is a lane the field leaves empty.</p>
+        <p style="font-size:13.5px;color:var(--chalk);margin-top:8px"><b>Who it serves:</b> the founder deciding who to trust, and the once-burned buyer who wants to see the thinking before committing.</p>
+        <div class="evi">Evidence: named six-person leadership team (site); a visual craft where showing the work is the content.</div>
+      </div>
+
+      <div class="card" style="border-top:3px solid var(--moss)">
+        <h3>Tie the work to what it earns the client</h3>
+        <p style="font-size:13.5px;color:var(--chalk);margin-top:6px"><b>What it means:</b> connect the brand and site to the outcome it drove, sign-ups, sales, a successful launch, not just how it looks.</p>
+        <p style="font-size:13.5px;color:var(--chalk);margin-top:8px"><b>The honest version:</b> almost nobody in this market does this, and today Tempestera does not either. That makes it a growth direction, not a current edge. It needs a system to capture outcomes and report them, which is exactly what the motion in How It Works is built to add.</p>
+        <p style="font-size:13.5px;color:var(--chalk);margin-top:8px"><b>Who it serves:</b> every future buyer, once there are numbers to point to.</p>
+        <div class="evi">Evidence: current testimonials are qualitative, with no result attached (site). This is the frontier the whole market has left open.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">The position to own</div>
+    <h3>A sharper way to say who you are</h3>
+    <div class="card" style="border-left:4px solid var(--canopy);margin-top:8px">
+      <p style="font-size:15px;color:var(--ink)"><b>Direction:</b> "One team that takes a founder from a blank page to a launched brand, site, and content engine, fast, and shows the thinking the whole way." It leads with the one-team scope, the launch-speed outcome, and the openness, the three things the field is quiet on.</p>
+      <div style="margin-top:14px">
+        <p style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono';letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px">Messaging to dial back</p>
+        <p style="font-size:13.5px;color:var(--chalk)">Generic "clarity" and "strategy over decoration" lines, the seven-audience spread, and abstract "purpose-driven" language. True, but what everyone says, so it does no work.</p>
+      </div>
+      <div style="margin-top:14px">
+        <p style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono';letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px">The differentiators to lead with</p>
+        <p style="font-size:13.5px;color:var(--chalk)">One accountable team for the whole launch. Speed without the template look. The process shown on camera by a named team. And, as the system matures, the result the work earned.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">Messaging by stage</div>
+    <h3>What to say, to whom, when</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Stage</th><th>Where their head is</th><th>The hook that lands</th></tr></thead>
+        <tbody>
+          <tr><td><b>Unaware</b></td><td>Building, but sensing the brand is not landing.</td><td>Show the process behind a real launch. "Here is how we took a founder from blank page to a brand people remember, in weeks."</td></tr>
+          <tr><td><b>Aware</b></td><td>Comparing studios, freelancers, and doing it themselves.</td><td>Contrast the one-team launch against stitching three freelancers together, or fighting a template alone. Make the hidden coordination cost visible.</td></tr>
+          <tr><td><b>Engaged</b></td><td>Deciding who to trust with it.</td><td>The named team on camera plus a matched before-and-after in their lane. Trust the people, then the proof, then the call.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TARGETING ================= -->
+<section class="view" id="targeting">
+  <div class="hero">
+    <div class="eyebrow">Audience Targeting Worksheet</div>
+    <h2 class="big">Who to reach, and how to reach them for the least money.</h2>
+    <p class="lede">This starts with who your buyer actually is, then narrows to the one to chase first, then shows the cheapest path to them, the exact LinkedIn attributes to select, and the search terms to bid on. Because there is little paid traffic today, the warm audiences you retarget are ones the content engine will build. That order is deliberate.</p>
+  </div>
+
+  <!-- S1 -->
+  <div class="sec">
+    <div class="kicker">01 / The buyer and the market</div>
+    <h3>A large, fragmented market, and one buyer inside it</h3>
+    <p class="lede" style="font-size:15px">Millions of small businesses and new startups launch or rebrand every year, each needing brand and web work. The figures vary widely by source and the point is directional: the market is enormous and crowded, so the win comes from a narrow, well-chosen buyer, not from reaching all of it.</p>
+    <div class="metastrip" style="margin-top:20px">
+      <div class="stat"><div class="n">1</div><div class="l">Decision-maker: the founder is the whole committee</div></div>
+      <div class="stat"><div class="n">Owner&ndash;CXO</div><div class="l">Seniority band that signs</div></div>
+      <div class="stat"><div class="n">1&ndash;50</div><div class="l">Company size where they buy</div></div>
+      <div class="stat"><div class="n">$5&ndash;12</div><div class="l">Search click to capture in-market demand</div></div>
+    </div>
+
+    <h3 style="margin-top:30px">Narrowing to the buyer to chase first</h3>
+    <div class="fnl">
+      <div class="fband fb1"><div class="fb-scope">SERVICEABLE MARKET</div><div class="fb-main">Founder-led small businesses and startups needing brand and web</div></div>
+      <div class="fb-desc">Everyone Tempestera could serve. Too broad to target profitably as one audience.</div>
+      <div class="fband fb2"><div class="fb-scope">PRIORITY BUYER</div><div class="fb-main">Early-stage founders launching or rebranding, primary English-speaking markets</div></div>
+      <div class="fb-desc">Higher project value and a cleaner story. Market is a confirm-with-you decision, defaulted from where the current client work sits.</div>
+      <div class="fband fb3"><div class="fb-scope">BEACHHEAD</div><div class="fb-main">Founders who want the whole launch from one team, on a deadline</div></div>
+      <div class="fb-desc">The lane from White Space, one team, launch speed. Start here, prove the motion, widen from strength.</div>
+    </div>
+    <figcaption style="text-align:center">Each band is a subset of the one above it, not a separate audience. You are not choosing between them, you are choosing where to point the first dollar.</figcaption>
+
+    <h3 style="margin-top:30px">The buying "committee," which mostly collapses onto one person</h3>
+    <p class="lede" style="font-size:14px">For an owner-led business the roles fold together. The founder is usually both the person who decides and the person who champions. Reach them directly, and answer the objection that keeps them from buying.</p>
+    <div class="committee">
+      <div class="pcard">
+        <span class="ppill pp-primary">Primary target</span>
+        <div class="prole">Founder / Owner</div>
+        <div class="pwho">Runs a small business or early startup, owns the budget and the decision.</div>
+        <div class="pcares">Cares about: looking credible fast, not getting burned, one team they can trust with the whole thing.</div>
+        <div class="chiprow"><span class="rl">How we reach them</span><span class="fchip">Seniority: Owner, CXO</span><span class="fchip">Company size: Self-employed, 1&ndash;10, 11&ndash;50</span><span class="fchip">Content that shows the process</span><span class="fchip">Retarget engagers</span></div>
+      </div>
+      <div class="pcard">
+        <span class="ppill pp-secondary">Secondary</span>
+        <div class="prole">Co-founder / Operations partner</div>
+        <div class="pwho">The second in a two or three person team who often scopes and shortlists vendors.</div>
+        <div class="pcares">Cares about: timeline, scope clarity, not having to project-manage three freelancers.</div>
+        <div class="chiprow"><span class="rl">How we reach them</span><span class="fchip">Function: Operations, Entrepreneurship</span><span class="fchip">Same company retarget pool</span><span class="fchip">One-team message</span></div>
+      </div>
+      <div class="pcard">
+        <span class="ppill pp-obj">Objection to answer</span>
+        <div class="prole">The do-it-yourself or cheap-freelancer alternative</div>
+        <div class="pwho">Not a person to target. The competing choice: piece it together on a template or across gig-marketplace freelancers.</div>
+        <div class="pcares">Their worry: an agency costs more and takes longer.</div>
+        <div class="chiprow"><span class="rl">The message that answers it</span><span class="fchip">Show the coordination cost of three freelancers</span><span class="fchip">One team, one timeline, one outcome</span></div>
+      </div>
+      <div class="pcard">
+        <span class="ppill pp-secondary">Secondary</span>
+        <div class="prole">The once-burned buyer</div>
+        <div class="pwho">A founder who paid for design before and got something that looked fine but did nothing.</div>
+        <div class="pcares">Cares about: proof it will actually work, and seeing the thinking before committing.</div>
+        <div class="chiprow"><span class="rl">How we reach them</span><span class="fchip">Named team on camera</span><span class="fchip">Before-and-after in their lane</span><span class="fchip">Retarget site visitors</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="sec">
+    <div class="kicker">02 / The audience efficiency ladder</div>
+    <h3>Cheapest audiences first, cold earns budget last</h3>
+    <p class="lede" style="font-size:15px">This is the order every dollar should climb. The catch today: the two cheapest rungs are warm audiences that do not exist yet, because there is almost no paid traffic to retarget. The content engine builds them. So the early weeks lean on the middle rungs, capture and a tight qualify layer, and shift toward warm as the pools fill.</p>
+    <div class="ladder">
+      <div class="rung"><div class="rn">1</div><div class="rbar r1"><div class="rt">Warm, ready to buy &mdash; $75&ndash;150</div><div class="rc">builds over the first weeks, not available day one</div><div class="rex">Visitors to a pricing or contact page, people who started the form. Cheapest of all, once the engine and the site tag have run a while.</div></div></div>
+      <div class="rung"><div class="rn">2</div><div class="rbar r2"><div class="rt">Warm, engaged &mdash; $120&ndash;250</div><div class="rc">the first pool the content engine fills</div><div class="rex">People who watched the videos, engaged the posts, visited the site, or subscribed to the newsletter. This is what light retargeting works on.</div></div></div>
+      <div class="rung"><div class="rn">3</div><div class="rbar r3"><div class="rt">In-market search &mdash; capture</div><div class="rc">the next lever, feeds every pool</div><div class="rex">Founders already searching for a branding or web-design partner, caught on Google and fed into the same retargeting audience.</div></div></div>
+      <div class="rung"><div class="rn">4</div><div class="rbar r4"><div class="rt">Signal-built target lists &mdash; $250&ndash;400</div><div class="rc">the workhorse at the expansion tier</div><div class="rex">Lists built by industry and geography, person-filtered to founders and owners, uploaded as a matched audience. Not named-enterprise account lists, this buyer is too small for that.</div></div></div>
+      <div class="rung"><div class="rn">5</div><div class="rbar r5"><div class="rt">Cold LinkedIn, broad filters &mdash; $300&ndash;600+</div><div class="rc">last, only after the rungs above prove out</div><div class="rex">Broad owner and founder titles at small companies. Longer to convert, needs more budget to warm. It earns its place only once the cheaper rungs are working.</div></div></div>
+    </div>
+    <div class="legend">Wider bar means higher cost per lead. Cheapest runs first, cold earns budget last.</div>
+    <div class="callout"><div><div class="co-t">Budget shape for a no-warm-pool start</div><div class="co-d">Phase one leans on the content engine to create demand and a light retargeting layer to catch it, with Google added at Option 2 to capture in-market searches. As the engagement, site, and newsletter pools fill, weight shifts up the ladder toward the cheap warm rungs. Management fee is always separate from ad spend, and these bands are indicative, not a forecast.</div></div></div>
+  </div>
+
+  <!-- S3 -->
+  <div class="sec">
+    <div class="kicker">03 / How the motion works</div>
+    <h3>One loop: create, qualify, capture, repeat</h3>
+    <figure>
+      <div class="fig"><svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Motion loop: content and search feed the site, LinkedIn qualifies, signals feed pools">
+        <rect x="20" y="34" width="160" height="54" rx="10" fill="#D4FF3D"/>
+        <text x="100" y="58" text-anchor="middle" font-family="'Archivo Black'" font-size="12" fill="#0A0A0C">Content engine</text>
+        <text x="100" y="74" text-anchor="middle" font-family="'JetBrains Mono'" font-size="9" fill="#0A0A0C">creates demand</text>
+        <rect x="20" y="104" width="160" height="54" rx="10" fill="#C4521F"/>
+        <text x="100" y="128" text-anchor="middle" font-family="'Archivo Black'" font-size="12" fill="#fff">Google search</text>
+        <text x="100" y="144" text-anchor="middle" font-family="'JetBrains Mono'" font-size="9" fill="#fff">captures in-market</text>
+        <rect x="290" y="68" width="150" height="56" rx="10" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/>
+        <text x="365" y="92" text-anchor="middle" font-family="'Inter'" font-weight="600" font-size="12" fill="var(--ink)">The website</text>
+        <text x="365" y="108" text-anchor="middle" font-family="'JetBrains Mono'" font-size="9" fill="var(--muted)">traffic lands</text>
+        <rect x="290" y="150" width="150" height="66" rx="10" fill="#1B9BD1"/>
+        <text x="365" y="172" text-anchor="middle" font-family="'Archivo Black'" font-size="11.5" fill="#04121f">LinkedIn qualifies</text>
+        <text x="365" y="190" text-anchor="middle" font-family="'JetBrains Mono'" font-size="8.5" fill="#04121f">founder / owner, small co</text>
+        <text x="365" y="204" text-anchor="middle" font-family="'JetBrains Mono'" font-size="8.5" fill="#04121f">before retargeting spend</text>
+        <rect x="548" y="110" width="152" height="60" rx="10" fill="#7BAA3E"/>
+        <text x="624" y="134" text-anchor="middle" font-family="'Archivo Black'" font-size="12" fill="#fff">Signals</text>
+        <text x="624" y="150" text-anchor="middle" font-family="'JetBrains Mono'" font-size="8.5" fill="#fff">who is engaging,</text>
+        <text x="624" y="162" text-anchor="middle" font-family="'JetBrains Mono'" font-size="8.5" fill="#fff">warm pool, named accounts</text>
+        <path d="M180 60 L285 90" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+        <path d="M180 130 L285 102" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+        <path d="M365 124 L365 148" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+        <path d="M440 180 L544 142" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+        <path d="M624 170 Q624 254 365 254 Q140 254 100 90" stroke="var(--muted)" stroke-width="1.3" fill="none" stroke-dasharray="6 5" marker-end="url(#ah)"/>
+        <text x="365" y="274" text-anchor="middle" font-family="'JetBrains Mono'" font-size="9" fill="var(--muted)">signals feed the pools, the loop compounds</text>
+        <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--muted)"/></marker></defs>
+      </svg></div>
+      <figcaption>LinkedIn is the only channel that can filter site traffic by company size, role, and seniority before you spend on it. That is why the warm and qualified audiences cost the least, and cold runs last.</figcaption>
+    </figure>
+  </div>
+
+  <!-- S4 -->
+  <div class="sec">
+    <div class="kicker">04 / LinkedIn targeting attributes</div>
+    <h3>The exact selections LinkedIn allows</h3>
+    <p class="lede" style="font-size:14px">LinkedIn has no free-text job-title box. It targets its own curated lists, so these are the real attributes and values. One thing it cannot target: the situation that matters most here, "just launched" or "about to rebrand." That is reached by the message and by self-selection ("launching something new?"), or proxied by a signal, never by a native filter.</p>
+    <div style="display:grid;gap:14px;margin-top:16px">
+      <div class="card"><div class="eyebrow">Job Seniorities</div><div style="margin-top:8px"><span class="tag">Owner</span> <span class="tag">Partner</span> <span class="tag">CXO</span> <span class="tag">VP</span></div></div>
+      <div class="card"><div class="eyebrow">Job Functions</div><div style="margin-top:8px"><span class="tag">Entrepreneurship</span> <span class="tag">Marketing</span> <span class="tag">Business Development</span> <span class="tag">Operations</span></div></div>
+      <div class="card"><div class="eyebrow">Company Size</div><div style="margin-top:8px"><span class="tag">Self-employed</span> <span class="tag">1&ndash;10</span> <span class="tag">11&ndash;50</span></div></div>
+      <div class="card"><div class="eyebrow">Industries (current V2 names, sample lanes)</div><div style="margin-top:8px"><span class="tag">Retail</span> <span class="tag">Consumer Services</span> <span class="tag">Food and Beverage Services</span> <span class="tag">Technology, Information and Media</span> <span class="tag">Wellness and Fitness Services</span></div><div class="src">Verified against the current LinkedIn industry list at build. The industry is a widening layer, the buyer is defined more by size and seniority than by industry.</div></div>
+      <div class="card"><div class="eyebrow">Member Skills / Interests (widening layer on cold only)</div><div style="margin-top:8px"><span class="tag">Entrepreneurship</span> <span class="tag">Small Business</span> <span class="tag">Startups</span> <span class="tag">Branding</span></div></div>
+      <div class="card"><div class="eyebrow">Location · Exclusions</div><div style="margin-top:8px"><span class="tag">Primary markets, confirm</span> <span class="tag">Exclude existing clients</span> <span class="tag">Exclude other agencies</span> <span class="tag">Exclude students</span> <span class="tag">Exclude job seekers</span></div></div>
+    </div>
+    <div class="callout"><div><div class="co-t">Two build defaults, always on</div><div class="co-d">Audience Expansion off, LinkedIn Audience Network off. They pad reach with the wrong people and quietly waste budget.</div></div></div>
+  </div>
+
+  <!-- S5 -->
+  <div class="sec">
+    <div class="kicker">05 / The priority segments</div>
+    <h3>Two named plays to build</h3>
+
+    <div class="card" style="border-left:4px solid var(--canopy);margin-top:16px">
+      <span class="segtag st-native">LinkedIn native · launch now</span>
+      <h3>Founder-led small brands in the priority market</h3>
+      <p style="font-size:13.5px;color:var(--chalk);margin-top:4px">The core buyer, buildable today with LinkedIn's own attributes and no outside data. Runs as retargeting first as the pool fills, with a small cold test alongside.</p>
+      <table class="ftable"><tbody>
+        <tr><td>Seniority</td><td>Owner, CXO, Partner</td></tr>
+        <tr><td>Function</td><td>Entrepreneurship, Marketing, Operations</td></tr>
+        <tr><td>Company size</td><td>Self-employed, 1&ndash;10, 11&ndash;50</td></tr>
+        <tr><td>Industry</td><td>Consumer and lifestyle lanes (Retail, Consumer Services, Food and Beverage Services), widened as needed</td></tr>
+        <tr><td>Geography</td><td>Primary English-speaking markets, confirm with you</td></tr>
+        <tr><td>Build defaults</td><td>Audience Expansion off, Audience Network off, exclude clients, agencies, students, job seekers</td></tr>
+        <tr><td>Estimated size</td><td>Inferred, size in-platform at build. Likely broad on cold, which is why retargeting leads and cold is a test</td></tr>
+        <tr><td>Why chase it</td><td>It is the priority buyer from White Space, the founder launching or rebranding</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--blue);margin-top:14px">
+      <span class="segtag st-combo">LinkedIn + signals · expansion</span>
+      <h3>Engaged and enriched, handed to outreach</h3>
+      <p style="font-size:13.5px;color:var(--chalk);margin-top:4px">The upsell play, once the engine has run and the signal layer is on. Takes the warm pool, enriches it, and surfaces the specific founders and companies leaning in for a personal follow-up.</p>
+      <table class="ftable"><tbody>
+        <tr><td>Source</td><td>Retargeting and content engagers, plus Website Visitor ID and organic-engager data</td></tr>
+        <tr><td>Person filter</td><td>Founder or owner at a small company, in the priority lane</td></tr>
+        <tr><td>Enrichment</td><td>Firmographic and contact enrichment, composed into one scored view of who is warmest</td></tr>
+        <tr><td>Action</td><td>Top accounts handed to a light LinkedIn and email follow-up, not just more ads</td></tr>
+        <tr><td>Estimated size</td><td>Estimate after build, it grows as the engine runs</td></tr>
+        <tr><td>Why chase it</td><td>It answers the once-burned buyer with a human touch at the moment they are paying attention</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="sec">
+    <div class="kicker">06 / Paid search</div>
+    <h3>Google: a cheap, high-intent capture lane, not a demand engine</h3>
+    <p class="lede" style="font-size:15px">Search does not create demand, it harvests people already looking. For branding and web design that demand is real but not huge, so Google is the capture lane added at Option 2, not the thing you lead with.</p>
+    <div class="tradeoff">
+      <div class="tpanel up">
+        <h4>Why this lane is worth it</h4>
+        <ul>
+          <li>Clear intent: someone searching "branding agency" has already decided they need one.</li>
+          <li>Shorter cycle than any cold audience, they are looking right now.</li>
+          <li>Self-qualifying: the search term names exactly what you sell.</li>
+        </ul>
+      </div>
+      <div class="tpanel catch">
+        <h4>The catch</h4>
+        <ul>
+          <li>Clicks run roughly $5 to $12 for branding and web-design terms, so budget disappears fast if it is loose.</li>
+          <li>Bigger agencies bid the head terms up, a small advertiser wins on specificity, not on outspending them.</li>
+          <li>The landing page, not the click, decides the return.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:18px">
+      <div class="card"><h3>Category capture</h3><div style="margin-top:6px"><span class="tag">branding agency</span> <span class="tag">web design agency</span> <span class="tag">logo design company</span></div><div class="ic"><span class="ic-chip ic-hi">Intent · high</span><span class="ic-chip ic-md">Cost · medium</span></div></div>
+      <div class="card"><h3>Method and differentiator</h3><div style="margin-top:6px"><span class="tag">brand and website package</span> <span class="tag">startup branding agency</span> <span class="tag">framer website designer</span></div><div class="ic"><span class="ic-chip ic-hi">Intent · high</span><span class="ic-chip ic-lo">Cost · lower, least contested</span></div></div>
+      <div class="card"><h3>Service long tail</h3><div style="margin-top:6px"><span class="tag">ecommerce website design</span> <span class="tag">rebrand for small business</span> <span class="tag">brand identity designer</span></div><div class="ic"><span class="ic-chip ic-hi">Intent · high</span><span class="ic-chip ic-md">Cost · mixed</span></div></div>
+      <div class="card"><h3>Comparison and research</h3><div style="margin-top:6px"><span class="tag">best branding agency for startups</span> <span class="tag">agency vs freelancer web design</span></div><div class="ic"><span class="ic-chip ic-md">Intent · medium</span><span class="ic-chip ic-md">Cost · medium</span></div><div class="src">Research stage, retarget these rather than expecting them to convert on the first click.</div></div>
+    </div>
+    <p style="font-size:13px;color:var(--chalk);margin-top:14px">Competitor conquest is weak in this market, there is no single dominant same-tier rival to bid against, so budget goes to the method and long-tail lanes instead. Brand defense on your own name runs cheaply once the content engine starts creating branded searches.</p>
+
+    <div class="week1" style="border-left-color:var(--terracotta);background:rgba(255,90,31,.08)">
+      <b>The landing page decides the return.</b> Because these clicks are expensive, a generic homepage wastes them. Each group needs a matched page: the "startup branding agency" searcher lands on a page about launching a startup brand, with one clear action, proof for that exact worry, and a short form. This is precisely where a small studio out-converts a bigger spender on the same click.
+    </div>
+
+    <div class="callout"><div><div class="co-t">Launch set</div><div class="co-d">Start tight on phrase and exact match: "startup branding agency", "brand and website package", "web design agency", "framer website designer", "rebrand for small business". Expand only from what converts.</div></div></div>
+    <div class="callout" style="border-left:4px solid var(--hazard)"><div><div class="co-t">Negative keywords, brand collision first</div><div class="co-d">Lead with the name clash: "Tempestera" shares a root with "tempest," so exclude weather, Shakespeare, and car-model senses on any broad match. Then the usual guards: "jobs", "salary", "free", "template", "course", "internship", "DIY", "how to".</div></div></div>
+  </div>
+
+  <!-- S7 -->
+  <div class="sec">
+    <div class="kicker">07 / Fit and intent signals</div>
+    <h3>The layer that says which small brands are leaning in</h3>
+    <p class="lede" style="font-size:15px">These inputs compose into one scored view of who is paying attention, so a follow-up goes to the founder who just watched three videos, not a cold list. Most of this is the expansion tier, it switches on as the engine runs and the site tag fills.</p>
+    <figure>
+      <div class="fig"><svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Five signal inputs converging into one scored account view">
+        <rect x="20" y="18" width="180" height="30" rx="7" fill="var(--card)" stroke="var(--line)"/><text x="30" y="38" font-family="'JetBrains Mono'" font-size="10" fill="var(--ink)">Content engagement</text>
+        <rect x="20" y="58" width="180" height="30" rx="7" fill="var(--card)" stroke="var(--line)"/><text x="30" y="78" font-family="'JetBrains Mono'" font-size="10" fill="var(--ink)">Site visitors (Web ID)</text>
+        <rect x="20" y="98" width="180" height="30" rx="7" fill="var(--card)" stroke="var(--line)"/><text x="30" y="118" font-family="'JetBrains Mono'" font-size="10" fill="var(--ink)">Organic engagers (Trigify)</text>
+        <rect x="20" y="138" width="180" height="30" rx="7" fill="var(--card)" stroke="var(--line)"/><text x="30" y="158" font-family="'JetBrains Mono'" font-size="10" fill="var(--ink)">Firmographic enrichment</text>
+        <rect x="20" y="178" width="180" height="30" rx="7" fill="var(--card)" stroke="var(--line)"/><text x="30" y="198" font-family="'JetBrains Mono'" font-size="10" fill="var(--ink)">Newsletter engagement</text>
+        <rect x="470" y="88" width="230" height="50" rx="10" fill="#7BAA3E"/><text x="585" y="110" text-anchor="middle" font-family="'Archivo Black'" font-size="13" fill="#fff">One scored view</text><text x="585" y="126" text-anchor="middle" font-family="'JetBrains Mono'" font-size="9" fill="#fff">who is warmest, right now</text>
+        <path d="M200 33 L466 108" stroke="var(--muted)" stroke-width="1.2" fill="none"/>
+        <path d="M200 73 L466 111" stroke="var(--muted)" stroke-width="1.2" fill="none"/>
+        <path d="M200 113 L466 113" stroke="var(--muted)" stroke-width="1.2" fill="none"/>
+        <path d="M200 153 L466 116" stroke="var(--muted)" stroke-width="1.2" fill="none"/>
+        <path d="M200 193 L466 119" stroke="var(--muted)" stroke-width="1.2" fill="none"/>
+      </svg></div>
+      <figcaption>The five inputs compose into one account-level view. This is reporting on who is close to buying, not a click count.</figcaption>
+    </figure>
+    <div class="grid3" style="margin-top:4px">
+      <div class="card"><h3>Who is engaging</h3><p style="font-size:13px;color:var(--chalk);margin-top:6px">The companies and roles behind the video views and post engagement.</p><div class="src">Source: DemandSense signals, included from the first tier.</div></div>
+      <div class="card"><h3>Named companies on the site</h3><p style="font-size:13px;color:var(--chalk);margin-top:6px">De-anonymized visitors, so an anonymous session becomes a named lead.</p><div class="src">Source: Website Visitor ID, included free for your first 90 days.</div></div>
+      <div class="card"><h3>Organic engagers</h3><p style="font-size:13px;color:var(--chalk);margin-top:6px">People engaging the posts, pulled out and enriched for follow-up.</p><div class="src">Source: Trigify, expansion tier.</div></div>
+    </div>
+    <div class="callout"><div><div class="co-t">How it runs</div><div class="co-d">Build the list and enrichment in the data layer, compose the signals into one scored view, upload the warm accounts as a matched audience, and hand the hottest founders to a light personal follow-up. The signals feed back into the pools, so the loop sharpens each cycle.</div></div></div>
+
+    <div class="week1"><b>What we confirm in week one, so nothing runs on a guess:</b> install the LinkedIn Insight Tag so retargeting pools start filling from day one; define the two conversions that count, a call booked and a form start; and confirm the target market and the monthly budget. These three set the plan on real inputs rather than assumptions.</div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="view" id="how">
+  <div class="hero">
+    <div class="eyebrow">How It Works</div>
+    <h2 class="big">Three channels, one motion, in one order.</h2>
+    <p class="lede">Run alone, each of these is fine and none is remarkable. Run as a system, in the right sequence, they make each other cheaper. Here is what each one does in your account, and why the order is the whole point.</p>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">The channels, and their jobs</div>
+    <div class="chan">
+      <div class="chan-card" style="--cc:var(--canopy)">
+        <div class="chan-head"><span class="role">Create</span><span class="ct">Thought leadership content engine</span><span class="tags">the cheapest reach · runs first</span></div>
+        <p>One conversation a month with someone on your team becomes a long-form video, roughly six short clips, a dozen posts across three weeks, and a newsletter, all published from the company page and amplified with Thought Leader Ads. It needs no creative discovery phase, because the expertise is already in the room. In a market where buyers scroll and compare before they ever enquire, this is what puts you in front of founders who are not searching yet, and it is the single cheapest way to earn attention in the whole system.</p>
+        <div class="why"><b>Job in this account:</b> make demand exist among founders who do not know they need you yet, and build the warm audience every other channel then works against.</div>
+      </div>
+      <div class="chan-card" style="--cc:var(--blue)">
+        <div class="chan-head"><span class="role">Connect</span><span class="ct">LinkedIn retargeting</span><span class="tags">qualifies · builds the warm pool</span></div>
+        <p>LinkedIn is the only channel that can filter your traffic by company size, role, and seniority before you spend a cent on it. As the content warms people up, a light retargeting layer catches the founders and owners who engaged, keeps your name in front of them while they decide, and quietly surfaces the named accounts leaning in hardest. Warm audiences like these run far more efficiently than cold, which is why this layer stays retargeting-only until the cheaper rungs are proven.</p>
+        <div class="why"><b>Job in this account:</b> qualify and convert the demand the content creates, and turn anonymous interest into a named, warm pool.</div>
+      </div>
+      <div class="chan-card" style="--cc:var(--terracotta)">
+        <div class="chan-head"><span class="role">Capture</span><span class="ct">Google paid search</span><span class="tags">added at Option 2 · harvests intent</span></div>
+        <p>Some founders are already searching for a branding or web-design partner today. Google captures them at the moment of intent, on the specific and lower-cost terms rather than the head terms the big agencies bid up, and feeds them into the very same retargeting pool the content is filling. It also defends your own name as the content starts creating branded searches. It is a capture lane, not a demand engine, which is exactly why it is the second step, not the first.</p>
+        <div class="why"><b>Job in this account:</b> harvest the people already looking, and recover the demand the content creates before a competitor captures it.</div>
+      </div>
+      <div class="chan-card" style="--cc:var(--moss)">
+        <div class="chan-head"><span class="role">Activate</span><span class="ct">Signals into conversations</span><span class="tags">the later rung, once the pool fills</span></div>
+        <p>When the warm pool is deep enough, the hottest signals, a founder who watched several videos or a named company that keeps returning to the site, get a light personal follow-up on LinkedIn or by email, rather than just more ads. This is the expansion step, earned once the create and connect layers are working, not something to switch on cold.</p>
+        <div class="why"><b>Job in this account:</b> turn the strongest signals into real conversations at the moment attention is highest.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">Why the order matters</div>
+    <h3>Each layer makes the next one cheaper</h3>
+    <div class="grid3" style="margin-top:16px">
+      <div class="card" style="border-top:3px solid var(--canopy)"><h3>Content lowers everything</h3><p style="font-size:13.5px;color:var(--chalk);margin-top:6px">It creates the branded searches Google then captures cheaply, and it fills the warm pool LinkedIn retargets. Nothing downstream works as well without it.</p></div>
+      <div class="card" style="border-top:3px solid var(--blue)"><h3>Retargeting lowers cost per lead</h3><p style="font-size:13.5px;color:var(--chalk);margin-top:6px">It works on traffic the content and search already paid to attract, so it converts warm attention instead of buying cold reach. Warm audiences run markedly higher engagement than cold.</p></div>
+      <div class="card" style="border-top:3px solid var(--terracotta)"><h3>Search shortens the cycle</h3><p style="font-size:13.5px;color:var(--chalk);margin-top:6px">It catches the founders who are ready now, so you are not waiting for every buyer to be warmed from scratch. It compounds the pool rather than replacing it.</p></div>
+    </div>
+    <div class="strat"><b>The compounding point:</b> judged on its own, any single channel looks either slow or expensive. Judged as a sequence, content makes search and retargeting cheaper, retargeting converts what content and search attract, and search shortens the wait. That is why the recommendation is a system with an order, not a channel.</div>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">The layer underneath</div>
+    <h3>Signals: who is actually paying attention</h3>
+    <p class="lede" style="font-size:15px">Most agencies rent a dashboard that reports clicks. We run on DemandSense, a signal platform we operate at depth, which composes the engagement, the site visits, and the enrichment into one account-level view: which companies and which founders are leaning in, and how close they are to reaching out. From the first tier you see who is engaging with the content. Website Visitor ID, included free for your first 90 days, turns anonymous sessions into named companies and people. It is reporting a founder can act on, not a vanity metric.</p>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">What we report, and what we do not promise</div>
+    <h3>How this is measured, honestly</h3>
+    <div class="grid2" style="margin-top:14px">
+      <div class="card"><h3>What we report each cycle</h3><ul style="list-style:none;display:grid;gap:8px;margin-top:8px">
+        <li style="font-size:13.5px;color:var(--chalk);padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--moss-text)">&bull;</span> Reach and engagement on the content, the leading indicator that the create motion is working.</li>
+        <li style="font-size:13.5px;color:var(--chalk);padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--moss-text)">&bull;</span> Warm-pool growth: how fast the retargetable audience is filling.</li>
+        <li style="font-size:13.5px;color:var(--chalk);padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--moss-text)">&bull;</span> Named accounts and founders surfacing as engaged, ready for follow-up.</li>
+        <li style="font-size:13.5px;color:var(--chalk);padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--moss-text)">&bull;</span> Calls booked and form starts, the outcomes that matter, once the pool is deep enough to produce them.</li>
+      </ul></div>
+      <div class="card"><h3>Reading the first 60 days right</h3><p style="font-size:13.5px;color:var(--chalk);margin-top:6px">Booked calls are the goal, but they are not the only sign the motion is working. Because buyers in this market research before they reach out, the early read is reach, engagement, and a warm pool that is filling. Those are the leading indicators that pipeline is forming. A program judged only on week-two call volume can look like it is failing while it is doing exactly what it should. We say this up front so the numbers are read the right way.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PATHS FORWARD ================= -->
+<section class="view" id="paths">
+  <div class="hero">
+    <div class="eyebrow">Paths Forward</div>
+    <h2 class="big">Where we fit, and the two ways to start.</h2>
+    <p class="lede">Start small, on the motion that creates the demand you do not have yet, and earn the rest as the pool fills. Here is where this maps to your strengths, two scoped options, and the proof that they work.</p>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">Fit</div>
+    <div class="fit">
+      <h3>Where this fits you well</h3>
+      <ul>
+        <li><b>You have the raw material most studios lack.</b> Six named leaders in a visual craft is a content engine waiting to be switched on. The expertise is already in the room, so there is no creative discovery phase to pay for.</li>
+        <li><b>A content-first motion matches your stage.</b> With little paid traffic today, the right move is to create demand and catch it, not to buy cold reach. That is exactly what the recommended option does.</li>
+        <li><b>The entry option is built for teams starting upstream.</b> The $2,500 tier exists for smaller organizations building the demand foundation first, with light retargeting to convert it. It is the aim-small starting point, not a stripped-down version of something bigger.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">The options</div>
+    <h3>Two scoped starting points</h3>
+    <div class="pm-wrap">
+      <table class="pm">
+        <thead>
+          <tr>
+            <th style="min-width:190px"></th>
+            <th class="rec"><span class="rec-pill">Recommended for Tempestera</span><div class="plan-name">Demand Engine + LinkedIn</div><div class="plan-price">$2,500/mo + ad spend</div><div class="plan-price">up to ~$5k/mo spend · $1,500 setup</div></th>
+            <th><div class="plan-name">+ Light Google</div><div class="plan-price">$4,000/mo + ad spend</div><div class="plan-price">up to ~$10k/mo combined · $1,500 setup</div></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="sec-row"><td colspan="3">The motion</td></tr>
+          <tr><td class="rlbl">Content engine (thought leadership)</td><td class="rec-col"><span class="yes">&#10003;</span> Full build</td><td><span class="yes">&#10003;</span> Full build</td></tr>
+          <tr><td class="rlbl">LinkedIn retargeting</td><td class="rec-col"><span class="yes">&#10003;</span> Warm pool</td><td><span class="yes">&#10003;</span> Warm pool</td></tr>
+          <tr><td class="rlbl">Google paid search</td><td class="rec-col"><span class="no">&mdash;</span></td><td><span class="yes">&#10003;</span> Capture lane</td></tr>
+
+          <tr class="sec-row"><td colspan="3">What's produced each month</td></tr>
+          <tr><td class="rlbl">Long-form video</td><td class="rec-col">1</td><td>1</td></tr>
+          <tr><td class="rlbl">Short clips</td><td class="rec-col">~6</td><td>~6</td></tr>
+          <tr><td class="rlbl">Posts</td><td class="rec-col">~12</td><td>~12</td></tr>
+          <tr><td class="rlbl">Newsletter</td><td class="rec-col"><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td></tr>
+
+          <tr class="sec-row"><td colspan="3">Signals &amp; intelligence</td></tr>
+          <tr><td class="rlbl">DemandSense, who's engaging</td><td class="rec-col"><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td></tr>
+          <tr><td class="rlbl">Website Visitor ID</td><td class="rec-col"><span class="yes">&#10003;</span> Free, first 90 days</td><td><span class="yes">&#10003;</span> Free, first 90 days</td></tr>
+
+          <tr class="sec-row"><td colspan="3">Team</td></tr>
+          <tr><td class="rlbl">Demand strategist</td><td class="rec-col"><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td></tr>
+          <tr><td class="rlbl">Creative lead</td><td class="rec-col"><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td></tr>
+          <tr><td class="rlbl">Paid media lead</td><td class="rec-col">LinkedIn</td><td>LinkedIn + Google</td></tr>
+          <tr><td class="rlbl">Signals &amp; reporting analyst</td><td class="rec-col"><span class="yes">&#10003;</span></td><td><span class="yes">&#10003;</span></td></tr>
+
+          <tr class="sec-row"><td colspan="3">Reporting</td></tr>
+          <tr><td class="rlbl">Cadence</td><td class="rec-col">Monthly + quarterly read</td><td>Monthly + quarterly read</td></tr>
+          <tr><td class="rlbl">Channels reported</td><td class="rec-col">Content + LinkedIn</td><td>Dual-channel</td></tr>
+
+          <tr class="sec-row"><td colspan="3">Why it fits</td></tr>
+          <tr><td class="rlbl">In one line</td><td class="rec-col">Creates the demand you lack, then catches it. The fastest path from content to pipeline.</td><td>Everything in Option 1, plus captures the founders already searching today.</td></tr>
+
+          <tr><td></td><td class="rec-col cta-cell"><a class="btn primary" href="https://landbot.online/v3/H-2201411-ZNNL8EM9RF7C2XAC/index.html" target="_blank" rel="noopener">Start here</a></td><td class="cta-cell"><a class="btn ghost" href="https://landbot.online/v3/H-2201411-ZNNL8EM9RF7C2XAC/index.html" target="_blank" rel="noopener">Talk it through</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout"><div><div class="co-t">The free Demand Plan stays free.</div><div class="co-d">The competitor read and targeting worksheet in this room were our own analysis, done at no cost, and yours to keep either way. The fees above are the flat monthly management fee, always separate from ad spend, with a one-time $1,500 build setup and a 90-day discovery horizon so the system has room to prove out.</div></div></div>
+    <div class="callout"><div><div class="co-t">Where it goes next</div><div class="co-d">When the warm pool is deep and the two options are working, the next rung is The Connected System, from $5,000/mo, which adds full cold LinkedIn and keeps Website Visitor ID running past the first 90 days. Earned by the options below it, not bought up front.</div></div></div>
+  </div>
+
+  <div class="sec">
+    <div class="kicker">Proof</div>
+    <h3>Where we have run this exact motion</h3>
+    <div class="proof">
+      <div class="proof-card"><div class="metric">13x ROAS</div><div class="name">HeyReach · product-led SaaS</div><div class="why">Organic-heavy, founder-brand, with a history of cheap sign-ups that churned. We led with content and a warm-traffic activation, the same create-then-catch order recommended here. <b>Why this one for you:</b> it is the content-first, founder-on-camera motion, proven.</div></div>
+      <div class="proof-card"><div class="metric">~$70 CPL</div><div class="name">Professional services · 60% form completion</div><div class="why">A lean budget and a simple offer, run efficiently. <b>Why this one for you:</b> it shows the motion produces qualified leads without a large media budget, which is the reality at your starting tier.</div></div>
+      <div class="proof-card"><div class="metric">0 to 32</div><div class="name">Life sciences · conversions in 90 days</div><div class="why">From no paid history at all to real pipeline in a single quarter. <b>Why this one for you:</b> it is the cold-start case, demand created where there was none, which is your exact situation.</div></div>
+    </div>
+  </div>
+
+  <div class="sec" style="border-bottom:none">
+    <div class="cta-block dark-panel">
+      <h2>Start upstream. Build the demand, then catch it.</h2>
+      <p>One call to confirm the target market, the budget, and the first month of content. No pitch, just the plan and where to begin.</p>
+      <div class="btnrow" style="justify-content:center">
+        <a class="btn primary" href="https://landbot.online/v3/H-2201411-ZNNL8EM9RF7C2XAC/index.html" target="_blank" rel="noopener">Book the call</a>
+        <a class="btn ghost" href="#overview" data-goto="overview">Back to the overview</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    Built by Impactable from public sources with no account access. Figures are indicative estimates, not forecasts, and unknowns are flagged rather than filled in. DemandSense and Website Visitor ID are software Impactable operates.
+    <details style="margin-top:12px"><summary><span class="chip"></span><span class="v">Show</span> full notes and limitations</summary><div class="det-body">Audience sizes are estimated in-platform at build and marked inferred until measured. The target market and monthly budget are confirmed with you before anything runs. Search click costs cited are 2026 category benchmarks for branding and web-design terms and vary by term, geography, and competition. Competitor scale figures are context inside each profile, not a claim about Tempestera. Pricing reflects Impactable's published Demand Engine tiers plus a scoped Google option; the flat fee is separate from ad spend.</div></details>
+  </div>
+</section>
+
+</main>
+<script>
+(function(){
+  var root=document.documentElement, tbtn=document.getElementById('themeBtn');
+  var saved=null; try{saved=localStorage.getItem('imp_theme');}catch(e){}
+  if(saved){root.setAttribute('data-theme',saved);}
+  function icon(){tbtn.textContent = root.getAttribute('data-theme')==='light' ? '☀' : '☾';}
+  icon();
+  tbtn.addEventListener('click',function(){
+    var t=root.getAttribute('data-theme')==='light'?'dark':'light';
+    root.setAttribute('data-theme',t);
+    try{localStorage.setItem('imp_theme',t);}catch(e){}
+    icon();
+  });
+  var views=['overview','whitespace','targeting','how','paths'];
+  function show(v){
+    if(views.indexOf(v)===-1){return;}          // unknown hash degrades, never blanks
+    var el=document.getElementById(v);
+    if(!el||!el.classList.contains('view')){return;}
+    document.querySelectorAll('.view').forEach(function(s){s.classList.toggle('active',s.id===v);});
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.v===v);});
+    if(location.hash!=='#'+v){history.replaceState(null,'','#'+v);}
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){show(t.dataset.v);});});
+  document.querySelectorAll('[data-goto]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();show(a.dataset.goto);});});
+  window.addEventListener('hashchange',function(){show(location.hash.replace('#',''));});
+  var init=location.hash.replace('#','');
+  if(init&&views.indexOf(init)!==-1){show(init);}
+})();
+</script>
+</body>
+</html>
